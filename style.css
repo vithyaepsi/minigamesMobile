@@ -1,0 +1,47 @@
+html{
+	height: 	100%;
+	margin:		0;
+	padding:	0;
+}
+body{
+	height:		100%;
+	margin:		0;
+	display:	flex;
+	flex-direction: column;
+}
+main{
+	border:		1px solid black;
+	height:		100%;
+	display: 	flex;
+}
+.game_container{
+	display: 	flex;
+	height: 	100%;
+	width: 		100%;
+	flex-direction: column;
+	align-items: center;
+  	justify-content: center;
+}
+.game_container > div{
+	align-items: center;
+  	justify-content: center;
+}
+.game_frame{
+	display :	none;
+	width: 	100%;
+}
+.game_canvas{
+	width:	100%;
+}
+
+.header_container{
+	padding:		0;
+	margin:			0;
+	display:		flex;
+	flex-direction: row;
+}
+
+.game_floating_animal{
+	display: 	block;
+	position:	absolute;
+}
