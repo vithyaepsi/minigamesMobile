@@ -15,6 +15,11 @@ $(".begin").on("click", function(){
 });
 
 function game_01(){
+
+	$("body").on("click", ".game_floating_animal", function(){
+	   $(this).css("display", "none");
+	});
+
 	var imagen = new Image();
 
 	imagen.onload = function(){
