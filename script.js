@@ -16,19 +16,20 @@ $(".begin").on("click", function(){
 
 function game_01(){
 
+	var image_path = "furet.png";
+
 	$("body").on("click", ".game_floating_animal", function(){
 	   $(this).css("display", "none");
 	});
 
 	var imagen = new Image();
 
-	imagen.onload = function(){
+	var gameinit = function(){
 		var src_image_height = imagen.height;
 		var src_image_width = imagen.width;
 
 		for(var i = 0; i < 40; i++){
-			//$(".game_frame").append($('<div class="game_floating_animal furet_'+ i +'"><img src="furet.png" /></div>'));
-			var img = $('<img src="furet.png" />');
+			var img = $('<img src="'+ image_path +'" />');
 			var div = $('<div class="game_floating_animal furet_'+ i +'"></div>');
 
 			var image_height = getRandomInt(50, 150);
@@ -60,7 +61,10 @@ function game_01(){
 		}
 	};
 
-	imagen.src = "furet.png";
+	imagen.onload = gameinit;
+
+	//	Déclenche le chargement de l'image
+	imagen.src = image_path;
 
 			
 
