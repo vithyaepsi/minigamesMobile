@@ -7,6 +7,7 @@ function getRandomInt(min, max) {
 }
 
 $(".begin").on("click", function(){
+	$(".game_frame").html('');
 	$(".game_container").css("display", "none");
 	$(".game_frame").css('display', "block");
 
@@ -14,9 +15,19 @@ $(".begin").on("click", function(){
 
 });
 
+$(".begin_02").on("click", function(){
+	$(".game_frame").html('');
+	$(".game_container").css("display", "none");
+	$(".game_frame").css('display', "block");
+
+	game_02();
+
+});
+
 function game_01(){
 
 	var image_path = "furet.png";
+
 
 	$("body").on("click", ".game_floating_animal", function(){
 	   $(this).css("display", "none");
@@ -66,9 +77,86 @@ function game_01(){
 	//	Déclenche le chargement de l'image
 	imagen.src = image_path;
 
+}
+
+function game_02(){
+	var gameinit = function(){
+		var x_dir = getRandomInt(-180, 179);
+		var y_dir = 0;
+
+		var winner = false;
+		var winner_ticks = 0;
+
+		var interval = setInterval(function() { 
 			
 
-			
+
+		   	if (winner != false && winner_ticks > 10) { 
+		    	
+		   	}
+		   	else { 
+		    	clearInterval(interval);
+		   	}
+		}, 5000);
+
+	};
+}
+
+/*
+**	Valide la proximité entre deux angles allant de -179 à 180°
+**	ARGS :
+**	angl1 et angl2 deux int entre -179 et 180
+**	prox la distance angulaire max entre les deux angles 
+**	
+**
+*/
+function Angles(angl1, angl2, prox){
+	//if()
+	var sin1 = radToSin(degreesToRad(angl1));
+	var sin2 = radToSin(degreesToRad(angl2));
+	var cos1 = radToCos(degreesToRad(angl1));
+	var cos2 = radToCos(degreesToRad(angl2));
+
+	console.log( (sin1 - sin2) > -prox );
+	if( 
+		( (sin1 - sin2) > -prox && 
+			(sin1 - sin2) < prox 
+		) 
+		&&
+		(
+			(cos1 - cos2) > -prox && 
+			(cos1 - cos2) < prox
+		)
+
+		){
+		console.log("close enough");
+	}
+	else{
+		console.log("sucky sucky");
+	}
+}
+
+function degreesToRad(test){
+	var rad = ( (test * Math.PI) / 180 );
+	//console.log(rad);
+	return rad;
+	//console.log(num);
+}
+function radToSin(input){
+	var num = Math.sin(input);
+	num = Math.round(num * 1000) / 1000;
+	return num;
+}
+function radToCos(input){
+	var num = Math.cos(input);
+	num = Math.round(num * 1000) / 1000;
+	return num;
+}
 
 
+function unitTest(){
+	for(var i = -210; i < 190; i += 10){
+		console.log("angle = "+ i);
+		Angles(180, i, 0.20);
+	}
 }
