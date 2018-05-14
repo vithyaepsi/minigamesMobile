@@ -45,3 +45,6 @@ main{
 	display: 	block;
 	position:	absolute;
 }
+.unclickable{
+	pointer-events: none;
+}
