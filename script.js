@@ -102,6 +102,14 @@ function game_01(){
 
 }
 
+
+/*
+**	Point the right direction
+**	Le jeu détermine une position aléatoire sur l'axe alpha et beta de l'accéléromètre (yaw et pitch)
+**	(on pourrait utiliser également gamma, le roll)
+**	Plus on s'approche de la position aléatoire, plus le téléphone vibre
+**	Il faut verrouiller la position pendant 5 secondes pour gagner
+*/
 function game_02(){
 	var gameinit = function(){
 		var x_dir = 0;
@@ -114,14 +122,11 @@ function game_02(){
 		
 		var vibrationIntensity = 0;
 
-
-
 		function handleOrientation(event) {
 			current_x = event.alpha;
 			current_y = event.beta;
 
 			console.log( "beta : " + current_y + " | alpha : "+ current_x );
-
 		}
 
 		window.addEventListener('deviceorientation', handleOrientation);
@@ -159,14 +164,34 @@ function game_02(){
 	gameinit();
 }
 
+
+/*
+**	Keep the rhythm
+**
+*/
+function game_03(){
+
+}
+
+/*
+**	Quiz
+**	Plusieurs types de questions sont disponibles
+**		-Identifier le sujet de la photo
+**			4 réponses possibles sont choisies parmi les réponses de la base
+**			L'une d'elle est le sujet de la photographie
+**		-	
+**
+*/
+
 /*
 **	Valide la proximité entre deux angles allant de -179 à 180°
 **	ARGS :
 **	angl1 et angl2 deux int entre -179 et 180
 **	prox la distance angulaire max entre les deux angles (entre -1 et 1)
 **	
-**
+**	INUTILEMENT COMPLIQUÉ
 */
+/*
 function Angles(angl1, angl2, prox){
 	//if()
 	var sin1 = radToSin(degreesToRad(angl1));
@@ -191,7 +216,7 @@ function Angles(angl1, angl2, prox){
 	else{
 		console.log("sucky sucky");
 	}
-}
+}*/
 
 /*
 **	Calcule la distance entre les angles
@@ -200,8 +225,8 @@ function Angles(angl1, angl2, prox){
 function angleDistance(angl1, angl2){
 	//	on rend positif toutes les valeurs en décalant de 180 
 	//	angl1 et angl2 sont entre 1 et 360
-	angl1 += 180;
-	angl2 += 180;
+	//angl1 += 180;
+	//angl2 += 180;
 
 	//	Si les angles, pour une raison inconnue, dépassent 360, on utilise le modulo pour récupérer une valeur entre 1 et 360
 	angl1 = angl1 % 360;
