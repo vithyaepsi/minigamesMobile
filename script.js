@@ -81,32 +81,66 @@ function game_01(){
 
 function game_02(){
 	var gameinit = function(){
-		var x_dir = getRandomInt(-180, 179);
-		var y_dir = 0;
+		var x_dir = 0;
+		var y_dir = getRandomInt(-180, 179);
 
 		var winner = false;
 		var winner_ticks = 0;
+		var current_x = 0;
+		var current_y = 0;
+		
+		var vibrationIntensity = 0;
+
+
+
+		function handleOrientation(event) {
+			current_x = event.alpha;
+			current_y = event.beta;
+
+			console.log( "beta : " + current_y + " | alpha : "+ current_x );
+
+		}
+
+		window.addEventListener('deviceorientation', handleOrientation);
 
 		var interval = setInterval(function() { 
 			
-
-
-		   	if (winner != false && winner_ticks > 10) { 
-		    	
-		   	}
-		   	else { 
+			if(winner_ticks >= 10) { 
+		   		console.log("You're winner");
 		    	clearInterval(interval);
+		    	stopVibration();
 		   	}
-		}, 5000);
+		   	else if (winner_ticks < 10) { 
+		   		stopVibration();
 
+			   	vibrationIntensity = 0;
+			   	vibrationIntensity += calculateIntensity(angleDistance(x_dir, current_x), 33);
+			   	vibrationIntensity += calculateIntensity(angleDistance(y_dir, current_y), 33);
+
+				vibration(vibrationIntensity);
+
+		    	if(	
+		    		angleDistance(x_dir, current_x) < 5 && 
+		    		angleDistance(y_dir, current_y) < 5 
+
+		    		){
+		    		winner_ticks += 1;
+		    	}
+		   	}
+		   	
+
+		   	//console.log("ouineur ticks : " + winner_ticks);
+		}, 500);
 	};
+
+	gameinit();
 }
 
 /*
 **	Valide la proximité entre deux angles allant de -179 à 180°
 **	ARGS :
 **	angl1 et angl2 deux int entre -179 et 180
-**	prox la distance angulaire max entre les deux angles 
+**	prox la distance angulaire max entre les deux angles (entre -1 et 1)
 **	
 **
 */
@@ -119,7 +153,8 @@ function Angles(angl1, angl2, prox){
 
 	console.log( (sin1 - sin2) > -prox );
 	if( 
-		( (sin1 - sin2) > -prox && 
+		( 
+			(sin1 - sin2) > -prox && 
 			(sin1 - sin2) < prox 
 		) 
 		&&
@@ -127,8 +162,7 @@ function Angles(angl1, angl2, prox){
 			(cos1 - cos2) > -prox && 
 			(cos1 - cos2) < prox
 		)
-
-		){
+	){
 		console.log("close enough");
 	}
 	else{
@@ -136,11 +170,40 @@ function Angles(angl1, angl2, prox){
 	}
 }
 
+/*
+**	Calcule la distance entre les angles
+**	angl1 et angl2 des valeurs de l'accéléromètre, entre -179 et 180.
+*/
+function angleDistance(angl1, angl2){
+	//	on rend positif toutes les valeurs en décalant de 180 
+	//	angl1 et angl2 sont entre 1 et 360
+	angl1 += 180;
+	angl2 += 180;
+
+	//	Si les angles, pour une raison inconnue, dépassent 360, on utilise le modulo pour récupérer une valeur entre 1 et 360
+	angl1 = angl1 % 360;
+	angl2 = angl2 % 360;
+
+	if(angl1 < angl2){
+		var temp = angl1;
+		angl1 = angl2;
+		angl2 = temp;
+	}
+
+	var dist = angl1 - angl2;
+
+	//	Si la distance angulaire entre les deux angles est supérieure à 180°,
+	//	la distance sera plus courte en tenant compte de la continuité des angles
+	if( dist > 180 ){
+		dist = 360 - dist;
+	}
+
+	return dist;
+}
+
 function degreesToRad(test){
 	var rad = ( (test * Math.PI) / 180 );
-	//console.log(rad);
 	return rad;
-	//console.log(num);
 }
 function radToSin(input){
 	var num = Math.sin(input);
@@ -153,10 +216,49 @@ function radToCos(input){
 	return num;
 }
 
+/*
+**	Fait vibrer le téléphone par rapport à la var intensity, un int entre 0 et 100
+**	Si intensity = 100, le téléphone vibrera continuellement
+**	intensity ne représente pas réellement l'intensité, mais la durée de vibration
+*/
+var vibrateInterval;
+function vibration(intensity){
+	var interval = 100;
 
-function unitTest(){
-	for(var i = -210; i < 190; i += 10){
-		console.log("angle = "+ i);
-		Angles(180, i, 0.20);
+	vibrateInterval = setInterval(function() {
+        navigator.vibrate(intensity);
+        console.log("I'm vibrating at " + intensity + " / "+ interval);
+    }, interval);
+}
+
+/*
+**	Arrête toute vibration
+*/
+function stopVibration(){
+	// Vide l'intervalle et annule les vibrations persistantes
+    if(vibrateInterval) clearInterval(vibrateInterval);
+    navigator.vibrate(0);
+}
+
+/*
+**	proximity un int entre 0 et 180, représente la distance entre deux angles
+**	maxVal un int entre 0 et 100
+**	L'intensité est incrémentée à partir de seuils, plus la distance est basse, plus l'intensité est élevée.
+*/
+function calculateIntensity(proximity, maxVal){
+	if(proximity < 5){
+		increment = 100;
 	}
+	else if(proximity < 15){
+		increment = (2/3)*100;
+	}
+	else if(proximity < 30){
+		increment = (1/3)*100;
+	}
+	else{
+		increment = 0;
+	}
+	//console.log("increment is " + increment);
+
+	return Math.round(((increment / 100) * maxVal));
 }
