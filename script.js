@@ -24,6 +24,15 @@ $(".begin_02").on("click", function(){
 
 });
 
+$(".begin_04").on("click", function(){
+	$(".game_frame").html('');
+	$(".game_container").css("display", "none");
+	$(".game_frame").css('display', "block");
+
+	game_04();
+
+});
+
 
 /*
 **	Click the animals !
@@ -168,10 +177,17 @@ function game_02(){
 /*
 **	Keep the rhythm
 **
+**	Un rythme est choisi aléatoirement entre 80 et 160 BPM
+**	Il est joué pendant X ticks
+**	Le rythme n'est après ce délai plus représenté sur l'écran/audio/vibration
+**	Il doit être maintenu par l'utilisateur en appuyant sur l'écran pendant X secondes
+**	On tiendra compte de la somme du décalage pour déterminer le score
 */
 function game_03(){
 
 }
+
+
 
 /*
 **	Quiz
@@ -179,9 +195,160 @@ function game_03(){
 **		-Identifier le sujet de la photo
 **			4 réponses possibles sont choisies parmi les réponses de la base
 **			L'une d'elle est le sujet de la photographie
-**		-	
+**			La photo est ensuite révélée (vérifier qu'elle est chargée pour tout le monde ?)
+**			La bonne réponse est révélée lorsque tout le monde a répondu (ou timeout)
+**		-Trouver l'intrus
+**			3 réponses sont choisies dans la même catégorie (chanteurs, humoristes... )
+**			1 autre réponse est choisie dans une catégorie aléatoire autre que la première
+**			Les 4 réponses sont révélées en même temps
+**			
 **
 */
+function game_04(){
+	var json_q = 
+	{
+		"id":"001",
+		"match_name":"Jean Luc",
+		"rounds":{
+			0 : {
+				"question" : {
+					"name" : "Quel est l'intrus ?",
+					"type" : "intrus"
+				},
+				"reponses" : {
+					"01" : {
+						"id" : "18",
+						"text": "Choucroute"
+					},
+					"02" : {
+						"id" : "184",
+						"text": "Choux à la crème"
+					},
+					"03" : {
+						"id" : "22",
+						"text": "Tarte à la poire"
+					},
+					"04" : {
+						"id" : "16",
+						"text": "Fondant au chocolat"
+					}
+				}
+			},
+			1 : {
+				"question" : {
+					"name" : "Quel est le sujet de l'image ?",
+					"type" : "image", 
+					"img" : "prout"
+				},
+				"reponses" : {
+					"01" : {
+						"id" : "362",
+						"text": "Tournevis"
+					},
+					"02" : {
+						"id" : "4851",
+						"text": "Roquefort"
+					},
+					"03" : {
+						"id" : "961",
+						"text": "Chien-loup"
+					},
+					"04" : {
+						"id" : "212",
+						"text": "Vitrier"
+					}
+				}
+			}
+
+		}
+	};
+
+	var play_round = function(round){
+		console.log(round);
+		$(".game_frame").html('');
+
+		var div = $('<div class="game_04_container"></div>');
+		$(".game_frame").append(div);
+
+		var wrapper = $('<div class="wrapper"></div>');
+		div.append(wrapper);
+
+		var inner1 = $('<div class="centerer"><h1 class="title">'+ round.question.name +'</h1></div>');
+		wrapper.append(inner1);
+
+
+		console.log(typeof(round.question.img));
+		if( typeof(round.question.img) !=  "undefined" ){
+			var inner12 = $('<div class="image_container"><img src="'+ round.question.img +'" /></div>');
+			wrapper.append(inner12);
+		}
+		
+
+		var inner2 = $('<div class="answers_container"></div>');
+		wrapper.append(inner2);
+
+		$.each(round.reponses, function(key, value){
+			var dudur = $('<h3>'+ value.text +'</h3>');
+			inner2.append(dudur);
+
+
+		});
+
+
+
+		if(round.question.type == "image"){
+
+		}
+
+	}
+
+	var quiz_start = function(){
+		var rounds = json_q["rounds"];
+
+		//	Foreach rounds, play round, award points
+		$.each(rounds, function(key, value){
+			play_round(value);
+		});
+
+		//	Show leaderboards ?
+
+	};
+
+	//	Init match
+
+	//	Print match name
+	var div  = $('<div class="game_04_container"></div>');
+	var div2 = $('<div class="wrapper"></div>');
+	div.append(div2);
+
+	var inner1 = $('<div class="centerer"><h1 class="title">'+ json_q["match_name"] +'</h1></div>');
+	div2.append(inner1);
+
+	var inner2 = $('<h2 class="title">La partie commence dans : <span class="game_04_countdown"></span> secondes</h2>');
+	div2.append(inner2);
+
+	$(".game_frame").append(div);
+
+	//	Countdown to match start
+	countdown(1000, quiz_start, ".game_04_countdown");
+
+	//	Match start
+	
+	
+
+
+}
+
+/*
+**	
+**
+*/
+function game_05(){
+
+}
+
+
+
 
 /*
 **	Valide la proximité entre deux angles allant de -179 à 180°
@@ -309,4 +476,28 @@ function calculateIntensity(proximity, maxVal){
 	//console.log("increment is " + increment);
 
 	return Math.round(((increment / 100) * maxVal));
+}
+
+/*
+**	countdown démarre un timer, et lance l'exécution de fund à la fin du timer
+**	On peut mettre à jour un élément HTML à l'aide de target, représentant une classe CSS
+**	time est en ms, doit être multiple de 1000
+*/
+function countdown(time, func, target){
+	
+	var countdownInterval;
+	if(target !== null){
+		$(target).html(time/1000);
+		countdownInterval = setInterval(function() {
+			time = time - 1000;
+			$(target).html(time/1000);
+			if(time <= 0){
+				clearInterval(countdownInterval);
+				func();
+			}
+	    }, 1000);
+	}
+	else{
+		setTimeout(func, time);
+	}
 }
