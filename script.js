@@ -238,7 +238,7 @@ function game_04(){
 				"question" : {
 					"name" : "Quel est le sujet de l'image ?",
 					"type" : "image", 
-					"img" : "prout"
+					"img" : "topinambour.jpg"
 				},
 				"reponses" : {
 					"01" : {
@@ -263,6 +263,12 @@ function game_04(){
 		}
 	};
 
+	var quiz_end = function(){
+		//	end the quiz, get the right answer, print it, award points
+		console.log("time's up");
+
+	};
+
 	var play_round = function(round){
 		console.log(round);
 		$(".game_frame").html('');
@@ -273,32 +279,51 @@ function game_04(){
 		var wrapper = $('<div class="wrapper"></div>');
 		div.append(wrapper);
 
-		var inner1 = $('<div class="centerer"><h1 class="title">'+ round.question.name +'</h1></div>');
+		var inner1 = $('<div class="inner1 centerer"><h1 class="title">'+ round.question.name +'</h1></div>');
 		wrapper.append(inner1);
 
 
 		console.log(typeof(round.question.img));
-		if( typeof(round.question.img) !=  "undefined" ){
-			var inner12 = $('<div class="image_container"><img src="'+ round.question.img +'" /></div>');
+		if( typeof(round.question.img) != "undefined" && round.question.type == "image"){
+			var inner12 = $('<div class="inner2 image_container centerer"></div></div>');
 			wrapper.append(inner12);
-		}
-		
 
-		var inner2 = $('<div class="answers_container"></div>');
+			var innerdiv = $('<div></div>');
+			inner12.append(innerdiv);
+
+			var innerimage = new Image();
+			$(innerimage).addClass("image_quiz");
+
+			innerimage.onload = function(){
+				//	send image loaded signal
+
+				innerdiv.append(innerimage);
+			}; 
+			//	Déclenche le chargement de l'image
+			innerimage.src = round.question.img;
+
+		}
+
+		var inner2 = $('<div class="inner3 answers_container"></div>');
 		wrapper.append(inner2);
 
-		$.each(round.reponses, function(key, value){
-			var dudur = $('<h3>'+ value.text +'</h3>');
-			inner2.append(dudur);
 
+		var clicked = 1;
+		$.each(round.reponses, function(key, value){
+			
+
+			var dudur = $('<h3>'+ value.text +'</h3>');
+			dudur.on('click', function(){
+				if(clicked == 1){
+					$(this).css("border", "1px solid black");
+					clicked--;
+				}
+				
+			});
+			inner2.append(dudur);
 
 		});
 
-
-
-		if(round.question.type == "image"){
-
-		}
 
 	}
 
@@ -308,6 +333,14 @@ function game_04(){
 		//	Foreach rounds, play round, award points
 		$.each(rounds, function(key, value){
 			play_round(value);
+			
+			var foottimer = $('<span class="game_04_countdown"></span>');
+			$(".footer_container").html(foottimer);
+
+			console.log("ouate le fuque");
+			countdown(10000, quiz_end, ".game_04_countdown");
+			
+
 		});
 
 		//	Show leaderboards ?
@@ -491,9 +524,13 @@ function countdown(time, func, target){
 		countdownInterval = setInterval(function() {
 			time = time - 1000;
 			$(target).html(time/1000);
-			if(time <= 0){
+			if(time == 0){
 				clearInterval(countdownInterval);
 				func();
+				
+			}
+			else{
+				console.log("not up");
 			}
 	    }, 1000);
 	}

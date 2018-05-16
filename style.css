@@ -83,5 +83,21 @@ main{
 }
 
 .game_04_container .answers_container h3{
-	min-width: 300px;
+	width: 200px;
+	margin:	20px 50px;
+	text-align :center;
+	cursor: pointer;
+}
+
+.game_04_container .inner1, .game_04_container .inner3{
+	flex-grow: 1;
+}
+
+.game_04_container .inner2{
+	flex-grow: 100;
+}
+
+.game_04_container .image_container div, .game_04_container .image_container img{
+	max-width: 100%;
+	max-height: 100%;
 }
